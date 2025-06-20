@@ -1,0 +1,29 @@
+.success { color: green; }
+.failure { color: red; }
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator { display: inline; }
+
+body {
+  background-color: #494747; /* Use any hex, rgb, or named color */
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+.accordion{
+    --bs-accordion-btn-bg: #495b64 !important;
+    --bs-accordion-active-bg: #090a0a !important;
+    --bs-accordion-btn-icon-width: 18px !important;
+    --bs-accordion-btn-padding-y: 8px !important;
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.10rem rgb(0, 0, 0) !important;
+}
+
+.scrollable-menu {
+    overflow-y: auto;   
+    position: relative;
+}
+
+.accordion-item {
+    margin-bottom: 0.3rem;  
+}
+
+

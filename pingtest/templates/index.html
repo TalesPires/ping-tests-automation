@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load django_htmx static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% django_htmx_script %}
+    
+{% block content %}
+            <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="navbar-brand" style="font-weight: 700;">MONITORAMENTO BACKBONE - INFORBARRA</span>
+                <button id="refresh-button"
+                        hx-get="{% url 'pingtest:refresh_results' %}"
+                        hx-trigger="click, every 6m"
+                        hx-target="#results-cards"
+                        hx-indicator="#loading"
+                        class="btn btn-primary">
+                    Atualizar testes
+                </button>
+            </div>
+            </nav>
+            
+            <div class="offcanvas offcanvas-start bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                <div class="offcanvas-header text-light " data-bs-theme="dark" >
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel" style="font-weight: 700;">Outras Paginas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column justify-content-between">
+                    <div>
+                        <a href="{% url 'pingtest:falha' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Testes com Falha
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>   
+                        <p>
+                        <a href="{% url 'pingtest:cadastrar_teste' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Cadastro de testes
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        <p>
+                        <a href="{% url 'pingtest:editar_teste' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Edição de testes
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        {% if user.is_staff %}
+                        <hr class="dropdown-divider mx-2 my-3 border border-light">
+                        <a href="admin" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Pagina de Admin
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        {% endif%}
+                    </div>
+                    <div>
+                        <a href="{% url 'logout' %}" class="icon-link icon-link-hover text-danger text-decoration-none ps-2 mb-2" style="font-weight:600;">
+                            Sair
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                </div>
+        
+            <div id="results-cards">
+                {% include "partials/partial_index.html" %}
+            </div>
+{% endblock content %}

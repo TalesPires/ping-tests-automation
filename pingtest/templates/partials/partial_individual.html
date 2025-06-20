@@ -1,0 +1,21 @@
+<div id="results-cards" class="row row-cols-1 row-cols-md-3 g-4 px-4 py-4">
+    {% for teste in testes %}
+    <div class="col">
+        <div class="card text-bg-dark border-dark h-100 shadow">
+            <h5 class="card-header border-light" style="font-weight:600;">{{ teste.test_name }}</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-bg-dark">Estatisticas do ultimo teste: {{ teste.statistics }}</li>
+                <li class="list-group-item text-bg-dark">Mensagem de erro: {{ teste.error_message }}</li>
+                <li class="list-group-item {% if teste.success == 'FT' %}
+                    text-bg-danger
+                {% elif teste.success == 'FP' %}
+                    text-bg-warning
+                {% elif teste.success == 'SF' %}
+                    text-bg-success
+                {% endif %}">Status do teste: {{teste.get_success_display}}</li>
+                <li class="list-group-item text-bg-dark">Horário do teste: {{ teste.test_start|date:"d/m H:i:s" }} - {{ teste.test_end|date:"d/m H:i:s" }}</li>
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>

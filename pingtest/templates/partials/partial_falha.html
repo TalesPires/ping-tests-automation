@@ -1,0 +1,38 @@
+<div id="results-cards" class="row row-cols-1 row-cols-md-3 g-4 px-4 py-4">
+  {% for card in cards %}
+    {% if card.has_failure %}
+      <div class="col">
+        <div class="card text-bg-dark border-dark h-100 shadow">
+          <h5 class="card-header border-light">
+            <a href="{% url 'pingtest:teste_individual' card.test_name %}" class="icon-link icon-link-hover text-light text-decoration-none" style="font-weight:600;">
+              {{ card.test_name }}
+              <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+              </svg>
+            </a>
+          </h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-bg-dark">Estatisticas do ultimo teste: {{ card.latest.statistics }}</li>
+            <li class="list-group-item
+              {% if card.latest.success == 'FT' %}text-bg-danger
+              {% elif card.latest.success == 'FP' %}text-bg-warning
+              {% elif card.latest.success == 'SF' %}text-bg-success
+              {% endif %}">
+              Status do ultimo teste: {{ card.latest.get_success_display }}
+            </li>
+            <li class="list-group-item text-bg-dark">
+              Horário do ultimo teste: {{ card.latest.test_start|date:"d/m H:i:s" }} - {{ card.latest.test_end|date:"d/m H:i:s" }}
+            </li>
+            {% if card.latest_failure %}
+              <li class="list-group-item text-bg-dark">
+                Horário do ultimo teste com perda de pacote: {{ card.latest_failure.test_start|date:"d/m H:i:s" }} - {{ card.latest_failure.test_end|date:"d/m H:i:s" }}
+              </li>
+            {% else %}
+              <li class="list-group-item text-bg-dark">Nenhum teste com perda de pacote registrado.</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>

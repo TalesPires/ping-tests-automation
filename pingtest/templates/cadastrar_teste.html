@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_htmx static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% django_htmx_script %}
+    
+{% block content %}
+<nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="navbar-brand" style="font-weight: 700;" href="#">CADASTRAR NOVO TESTE</span>
+                <button id="refresh-button"
+                        class="btn btn-light invisible">
+                </button>
+            </div>
+            </nav>      
+            <div class="offcanvas offcanvas-start bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                <div class="offcanvas-header text-light " data-bs-theme="dark" >
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel" style="font-weight: 700;">Outras Paginas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column justify-content-between">
+                    <div>
+                        <a href="{% url 'pingtest:index' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Pagina Inicial
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>   
+                        <p>
+                        <a href="{% url 'pingtest:falha'     %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Testes com Falha
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        <p>
+                        <a href="{% url 'pingtest:editar_teste' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Edição de testes
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        {% if user.is_staff %}
+                        <hr class="dropdown-divider mx-2 my-3 border border-light">
+                        <a href="admin" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Pagina de Admin
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        {% endif%}
+                    </div>
+                    <div>
+                        <a href="{% url 'logout' %}" class="icon-link icon-link-hover text-danger text-decoration-none ps-2 mb-2" style="font-weight:600;">
+                            Sair
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                </div>
+
+
+<div class="container">
+    <div class="card text-bg-dark shadow mt-4">
+        <div class="card-body">
+            <form method="POST" action="{% url 'pingtest:cadastrar_teste' %}" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="{{ form.source_ip.id_for_label }}" class="form-label">IP de Origem</label>
+                        {% bootstrap_field form.source_ip show_label=False show_errors=True placeholder="10.131.100.4" %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.source_port.id_for_label }}" class="form-label">Porta de Origem</label>
+                        {% bootstrap_field form.source_port show_label=False show_errors=True placeholder="22" %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6"> 
+                        <label for="{{ form.dest_ip.id_for_label }}" class="form-label">IP de destino</label>
+                        {% bootstrap_field form.dest_ip show_label=False show_errors=True placeholder="1.1.1.1" %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.device_name.id_for_label }}" class="form-label">Nome do Dispositivo</label>
+                        {% bootstrap_field form.device_name show_label=False show_errors=True placeholder="JEQUIE-FGO-TP1" %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="{{ form.test_name.id_for_label }}" class="form-label">Nome do teste</label>
+                        {% bootstrap_field form.test_name show_label=False show_errors=True placeholder="TESTE JEQUIE" %}
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        {% bootstrap_field form.active show_label=False show_errors=True %}
+                        <label for="{{ form.active.id_for_label }}" class="form-label pb-2">Ativo</label>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-pequeno">SALVAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">                                 
+                <div class="modal-content text-bg-dark">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="successModalLabel">Novo teste cadastrado com sucesso!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-footer justify-content-start">
+                        <a href="{% url 'pingtest:index' %}" class="btn btn-primary btn-sm">Voltar para a página inicial</a>
+                        <a href="{% url 'pingtest:cadastrar_teste' %}" class="btn btn-primary btn-sm">Cadastrar novo teste</a>
+                </div>
+                </div>
+            </div>
+            </div>
+
+        {% if show_modal %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    myModal.show();
+                });
+            </script>
+        {% endif %}
+{% endblock content %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load django_htmx static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% django_htmx_script %}
+{% block content %}
+    <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="navbar-brand" style="font-weight: 700;" href="#">EDITAR TESTES</span>
+                <button class="btn btn-light invisible"></button>
+            </div>
+            </nav>      
+            <div class="offcanvas offcanvas-start bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                <div class="offcanvas-header text-light " data-bs-theme="dark" >
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel" style="font-weight: 700;">Outras Paginas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column justify-content-between">
+                    <div>
+                        <a href="{% url 'pingtest:index' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Pagina Inicial
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>   
+                        <p>
+                        <a href="{% url 'pingtest:falha'     %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2 pt-3" style="font-weight:600;">
+                            Testes com Falha
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        <p>
+                        <a href="{% url 'pingtest:cadastrar_teste' %}" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Cadastro de testes
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                        </p>
+                        {% if user.is_staff %}
+                        <hr class="dropdown-divider mx-2 my-3 border border-light">
+                        <a href="admin" class="icon-link icon-link-hover text-light text-decoration-none ps-2" style="font-weight:600;">
+                            Pagina de Admin
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        {% endif%}
+                    </div>
+                    <div>
+                        <a href="{% url 'logout' %}" class="icon-link icon-link-hover text-danger text-decoration-none ps-2 mb-2" style="font-weight:600;">
+                            Sair
+                            <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                </div>
+
+<div class="container atributos">
+    <div class="card text-bg-dark mt-4 shadow-lg">
+        <div class="card-header">
+            <h2 class="d-flex justify-content-center">
+                <input type="text" id="accordion_search_bar" class="form-control ms-2 mt-2" placeholder="Pesquisar...">
+            </h2>
+        </div>
+        <div class="card-body text-bg-dark">
+            <div class="scrollable-menu" id="scrollable-menu" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden; width: 100%;" data-bs-spy="scroll" data-bs-target="#scenarioAccordion" data-bs-offset="0" tabindex="0">
+                <div class="accordion accordion-flush w-100" id="scenarioAccordion">
+                    {% for scenario in scenarios %}
+                    <div class="accordion-item AccordionContainer" id="cenario-{{ forloop.counter }}">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                            <button class="accordion-button collapsed text-light" style="font-weight: bolder;" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                                {{ scenario.test_name }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#scenarioAccordion">
+                            <div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="ms-3 mt-2"><span class="text-dark" style="font-weight: bold;">IP de Origem</span><br>{{ scenario.source_ip }}</p>
+                                        <p class="ms-3"><span class="text-dark" style="font-weight: bold;">Porta de Origem</span><br>{{ scenario.source_port }}</p>
+                                        <p class="ms-3"><span class="text-dark" style="font-weight: bold;">Ativo</span ><br>{{ scenario.active|yesno:"Sim,Não" }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mt-2"><span class="text-dark" style="font-weight: bold;">IP de Destino</span><br>{{ scenario.dest_ip }}</p>
+                                        <p><span class="text-dark" style="font-weight: bold;">Nome do Dispositivo</span><br>{{ scenario.device_name }}</p>
+                                        <a type="button" href="{% url 'pingtest:form_editar_teste' scenario.id %}" class="btn btn-primary">EDITAR</a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ forloop.counter }}">
+                                            EXCLUIR
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
+                        <div class="modal fade" id="deleteModal{{ forloop.counter }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel{{ forloop.counter }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content text-bg-dark">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ forloop.counter }}">Realmente deseja excluir o teste {{ scenario.test_name }}?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{% url 'pingtest:deletar_teste' scenario.id %}" class="btn btn-primary btn-pequeno">Sim</a>
+                                            <button type="button" class="btn btn-danger btn-pequeno" data-bs-dismiss="modal">Não</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+                        
+    </div>
+
+    
+
+<script>
+    var search = document.getElementById('accordion_search_bar');
+    var accordions = document.querySelectorAll('.AccordionContainer');
+
+    // Show content on click
+    accordions.forEach(function(accordion) {
+        accordion.querySelector('button').addEventListener('click', function() {
+            this.nextElementSibling.classList.toggle('active');
+        });
+    });
+
+    search.addEventListener('input', function() {
+        var searchText = search.value.toLowerCase();
+        accordions.forEach(function(accordion) {
+            if (accordion.innerText.toLowerCase().includes(searchText)) {
+                accordion.style.display = 'block';
+            } else {
+                accordion.style.display = 'none';
+            }
+        });
+    });
+
+    var scrollElement = document.getElementById('scrollable-menu');
+    new bootstrap.ScrollSpy(scrollElement, {
+        target: '#employeeAccordion'
+    });
+</script>
+
+</body>
+</html>
+{% endblock content %}
