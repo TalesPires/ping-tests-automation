@@ -5,6 +5,7 @@ from pingtest.utils.test_runner import CacheManager, CleanupManager
 import logging
 from django_q.cluster import Cluster
 import time
+from django_q.models import Schedule
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,13 @@ class Command(BaseCommand):
             help='Stop all scheduled tests'
         )
     
-
+    def _cleanup_all_schedules(self):
+        """Delete all schedules created by this system"""
+        NetworkTestScheduler()._cleanup_existing_schedules()
+        CacheManager._cleanup_existing_cache()
+        
+        Schedule.objects.filter(name='db_cleanup').delete()
+        
     def handle(self, *args, **options):
         if options['stop']:
             scheduler = NetworkTestScheduler()
@@ -26,7 +33,8 @@ class Command(BaseCommand):
             CacheManager._cleanup_existing_cache()
             self.stdout.write(self.style.SUCCESS("All scheduled tests stopped"))
             return
-    
+
+        self._cleanup_all_schedules()
         CleanupManager.schedule_cleanup()
         CacheManager.schedule_cache_refresh()
         
