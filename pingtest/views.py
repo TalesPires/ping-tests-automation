@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def index(request):
-    # Get all unique test names
-    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
+    
+    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
 
     cards = []
     for name in test_names:
@@ -23,7 +23,7 @@ def index(request):
 @login_required
 def refresh_results(request):
     # Get all unique test names
-    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
+    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
 
     cards = []
     for name in test_names:
@@ -40,7 +40,7 @@ def refresh_results(request):
 @login_required
 def falha(request): 
     # Get all unique test names
-    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
+    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
 
     cards = []
     for name in test_names:
@@ -62,7 +62,7 @@ def falha(request):
 @login_required
 def partial_falha(request): 
     # Get all unique test names
-    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
+    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
 
     cards = []
     for name in test_names:
