@@ -34,10 +34,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             "Keep the Django Q cluster running with:\n"
             "python manage.py qcluster"
-        ))
-        
-        Cluster().start()    
-        
+        ))      
+    
         test_scenarios = [
             (
                 s.source_ip,
