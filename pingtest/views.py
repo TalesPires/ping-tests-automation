@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def index(request):
-    
-    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
+    # Get all unique test names
+    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
 
     cards = []
     for name in test_names:
@@ -17,13 +17,15 @@ def index(request):
             'latest': latest,
             'latest_failure': latest_failure,
         })
+        
+    cards.sort(key=lambda c: c['test_name'])
 
     return render(request, 'index.html', {'cards': cards})
 
 @login_required
 def refresh_results(request):
     # Get all unique test names
-    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
+    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
 
     cards = []
     for name in test_names:
@@ -34,13 +36,15 @@ def refresh_results(request):
             'latest': latest,
             'latest_failure': latest_failure,
         })
+    
+    cards.sort(key=lambda c: c['test_name'])
 
     return render(request, 'partials/partial_index.html', {'cards': cards})
 
 @login_required
 def falha(request): 
     # Get all unique test names
-    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
+    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
 
     cards = []
     for name in test_names:
@@ -56,13 +60,15 @@ def falha(request):
             'latest_failure': latest_failure,
             'has_failure': has_failure,
         })
+    
+    cards.sort(key=lambda c: c['test_name'])
 
     return render(request, 'falha.html', {'cards': cards})   
 
 @login_required
 def partial_falha(request): 
     # Get all unique test names
-    test_names = sorted(NetworkTestResult.objects.values_list('test_name', flat=True).distinct())
+    test_names = NetworkTestResult.objects.values_list('test_name', flat=True).distinct()
 
     cards = []
     for name in test_names:
@@ -78,6 +84,8 @@ def partial_falha(request):
             'latest_failure': latest_failure,
             'has_failure': has_failure,
         })
+        
+    cards.sort(key=lambda c: c['test_name'])
 
     return render(request, 'partials/partial_falha.html', {'cards': cards})
 

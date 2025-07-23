@@ -22,18 +22,19 @@ class NetworkTestScheduler:
         self.task_timeout = 300 
         
     
-    def start_polling_scheduler(self, poll_interval=420):
+    def start_polling_scheduler(self, poll_interval=360):
         """
-        Starts a background thread that periodically checks for new or removed active scenarios
+        Starts a background thread that periodically checks for new, removed, or changed scenarios
         and updates the schedule accordingly.
         """
         def polling_loop():
-            scheduled = set()
+            # Maps scenario.id -> last scheduled tuple
+            scheduled = {}
             logger.info("Starting background polling scheduler loop.")
             while True:
-                # Get all active scenarios as tuples
-                scenarios = [
-                    (
+                # Build current scenarios dict: id -> tuple
+                scenarios = {
+                    s.id: (
                         s.source_ip,
                         s.source_port,
                         s.dest_ip,
@@ -41,22 +42,36 @@ class NetworkTestScheduler:
                         s.test_name,
                     )
                     for s in NetworkTestScenario.objects.filter(active=True)
-                ]
-                current = set(scenarios)
+                }
 
-                # Schedule new scenarios
-                for scenario in current - scheduled:
-                    if self._validate_scenario(scenario):
-                        self._schedule_next(scenario)
-                        logger.info(f"Scheduled new scenario: {scenario[3]} ({scenario[4]})")
+                # Handle new or changed scenarios
+                for scenario_id, scenario_tuple in scenarios.items():
+                    if scenario_id not in scheduled:
+                        # New scenario: schedule it
+                        if self._validate_scenario(scenario_tuple):
+                            self._schedule_next(scenario_tuple)
+                            logger.info(f"Scheduled scenario: {scenario_tuple[3]} ({scenario_tuple[4]})")
+                        scheduled[scenario_id] = scenario_tuple
+                    elif scheduled[scenario_id] != scenario_tuple:
+                        # Scenario changed: remove old schedule, add new
+                        old_tuple = scheduled[scenario_id]
+                        sched_name = f"{self.schedule_name}_{old_tuple[3]}_{old_tuple[2]}"
+                        Schedule.objects.filter(name=sched_name).delete()
+                        logger.info(f"Removed old schedule for scenario: {old_tuple[3]} ({old_tuple[4]})")
+                        if self._validate_scenario(scenario_tuple):
+                            self._schedule_next(scenario_tuple)
+                            logger.info(f"Rescheduled scenario: {scenario_tuple[3]} ({scenario_tuple[4]})")
+                        scheduled[scenario_id] = scenario_tuple
 
-                # Optionally: Remove schedules for scenarios that are no longer active
-                for scenario in scheduled - current:
-                    sched_name = f"{self.schedule_name}_{scenario[3]}_{scenario[2]}"
-                    Schedule.objects.filter(name=sched_name).delete()
-                    logger.info(f"Removed schedule for scenario: {scenario[3]} ({scenario[4]})")
+                # Handle removed scenarios
+                for scenario_id in list(scheduled.keys()):
+                    if scenario_id not in scenarios:
+                        old_tuple = scheduled[scenario_id]
+                        sched_name = f"{self.schedule_name}_{old_tuple[3]}_{old_tuple[2]}"
+                        Schedule.objects.filter(name=sched_name).delete()
+                        logger.info(f"Removed schedule for deleted scenario: {old_tuple[3]} ({old_tuple[4]})")
+                        del scheduled[scenario_id]
 
-                scheduled = current
                 time.sleep(poll_interval)
 
         thread = threading.Thread(target=polling_loop, daemon=True)
