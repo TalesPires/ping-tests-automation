@@ -4,7 +4,7 @@ from django_q.tasks import async_task, schedule
 from django_q.models import Schedule
 from django.utils import timezone
 from django.db import close_old_connections
-from .ssh_client import SSHClient
+from .telnet_client import TelnetClient
 from pingtest.models import NetworkTestResult, NetworkTestScenario
 from django.core.cache import cache
 from django.db import transaction
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class NetworkTestScheduler:
     def __init__(self, interval_minutes=5):
-        self.ssh_client = SSHClient()
+        self.ssh_client = TelnetClient()
         self.interval = interval_minutes
         self.schedule_name = "network_test_schedule"
         self.task_timeout = 300 
