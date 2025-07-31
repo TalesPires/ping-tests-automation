@@ -158,7 +158,16 @@ Q_CLUSTER = {
     'sync': False,
     'max_attempts': 3,
     'max_runtime': 600,
-    # Remove ALL Redis-related configurations
+    'redis': {
+        'host': '127.0.0.1',
+        'port': 6379,
+        'db': 0,
+        'password': None,  # Set password if configured
+        'charset': 'utf-8',
+        'socket_timeout': None,
+        'errors': 'strict',
+        'ssl': False,
+    }
 }
 
 LOGIN_REDIRECT_URL = '/'
