@@ -178,7 +178,7 @@ class NetworkTestScheduler:
             'telnet_host': scenario[0] if len(scenario) > 0 else 'unknown',
             'telnet_port': scenario[1] if len(scenario) > 1 else 0,
             'ping_destination': scenario[2] if len(scenario) > 2 else 'unknown',
-            'test_name': scenario[2] if len(scenario) > 2 else 'unknown',
+            'test_name': scenario[4] if len(scenario) > 2 else 'unknown',
             'sw_name': scenario[3] if len(scenario) > 3 else 'unknown',
             'start_time': timezone.localtime(),
             'end_time': timezone.localtime(),
